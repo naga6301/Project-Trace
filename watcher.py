@@ -68,7 +68,7 @@ def recover_stalled():
     cutoff = (datetime.now() - timedelta(minutes=cfg.STALL_MINUTES)).isoformat()
     conn = _connect()
     cur = conn.execute("""
-        UPDATE voucher_ledger SET status = 'RETRY'
+        UPDATE voucher_ledger SET status = 'PENDING'
         WHERE status = 'PROCESSING' AND timestamp < ?
     """, (cutoff,))
     conn.commit()
