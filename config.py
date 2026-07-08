@@ -6,6 +6,7 @@ retune without touching engine code. Items marked TUNE are the ones that most
 affect accuracy and should be validated against your ground-truth sample.
 """
 import os
+import glob
 
 # ---- Folders ----------------------------------------------------------------
 # One destination per failure type, matching the flowchart + charter framework.
@@ -16,10 +17,12 @@ EXCEPTIONS_DIR    = "04_Exceptions"      # OCR / confidence / extraction failure
 MANUAL_REVIEW_DIR = "05_ManualReview"    # triple-lock value mismatches
 DUPLICATE_DIR     = "06_Duplicates"      # duplicate hashes
 
-DB_PATH      = os.path.join("data", "audit_state.db")
-MASTER_EXCEL = os.path.join("data", "master.xlsx")   # your FLAIR extract
-REPORT_DIR   = os.path.join("data", "reports")
-LOG_PATH     = os.path.join("data", "trace.log")
+DATA_DIR     = "data"
+DB_PATH      = os.path.join(DATA_DIR, "audit_state.db")
+REPORT_DIR   = os.path.join(DATA_DIR, "reports")
+LOG_PATH     = os.path.join(DATA_DIR, "trace.log")
+# Master Excel: you don't rename it. find_master() (below) auto-detects whatever
+# .xlsx/.xls is in data/, or you pass a path: python reconciler.py path\to\file.xlsx
 
 # Which ledger status lands a file in which folder (used by annotator).
 STATUS_FOLDER = {
@@ -78,3 +81,33 @@ PROXIMITY_LIMIT      = 0.30   # anchor<->value distance (fraction of page width)
 SUMMATION_TOLERANCE  = 0.01   # dollars
 STALL_MINUTES        = 10     # PROCESSING older than this -> reset to RETRY
 ENABLE_PREPROCESS    = True   # deskew/denoise on the OCR path
+
+
+# ---- Master Excel resolver --------------------------------------------------
+def find_master(explicit=None):
+    """
+    Decide which Excel is the master - no renaming required.
+      1. If a path is given (e.g. on the command line), use it.
+      2. Otherwise auto-detect the single .xlsx/.xls sitting in data/.
+    Raises a clear error on zero or several matches, so the wrong file is never
+    chosen silently. (Excel lock files like ~$export.xlsx are ignored.)
+    """
+    if explicit:
+        if not os.path.exists(explicit):
+            raise FileNotFoundError(f"Master Excel not found: {explicit}")
+        return explicit
+
+    found = (glob.glob(os.path.join(DATA_DIR, "*.xlsx"))
+             + glob.glob(os.path.join(DATA_DIR, "*.xls")))
+    candidates = [f for f in found if not os.path.basename(f).startswith("~$")]
+
+    if len(candidates) == 1:
+        return candidates[0]
+    if not candidates:
+        raise FileNotFoundError(
+            f"No Excel master found in '{DATA_DIR}/'. Put your export there, "
+            f"or pass its path:  python reconciler.py path\\to\\file.xlsx")
+    names = ", ".join(os.path.basename(c) for c in candidates)
+    raise ValueError(
+        f"Multiple Excel files in '{DATA_DIR}/' ({names}). Pass the one to use:  "
+        f"python reconciler.py path\\to\\file.xlsx")
