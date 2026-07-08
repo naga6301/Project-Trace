@@ -16,6 +16,7 @@ Routing:
   all three locks pass         -> VALIDATED  (03_Validated)
 """
 import re
+import sys
 import sqlite3
 
 import pandas as pd
@@ -39,8 +40,10 @@ def norm_date(s):
     return re.sub(r"\D", "", str(s))   # digits only, for lenient date compare
 
 
-def load_master():
-    df = pd.read_excel(cfg.MASTER_EXCEL, dtype=str).fillna("")
+def load_master(path=None):
+    master_path = cfg.find_master(path)     # auto-detect data/*.xlsx or use given path
+    print(f"[Reconciler] Using master: {master_path}")
+    df = pd.read_excel(master_path, dtype=str).fillna("")
     df.columns = [c.strip() for c in df.columns]
     return df
 
@@ -224,8 +227,8 @@ def save(conn, file_hash, detected, passed, status, reasons, locks):
     conn.commit()
 
 
-def run():
-    master = load_master()
+def run(master_path=None):
+    master = load_master(master_path)
     conn = sqlite3.connect(cfg.DB_PATH, timeout=10)
     conn.execute("PRAGMA journal_mode=WAL;")
     files = conn.execute(
@@ -247,4 +250,5 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    # Optional: python reconciler.py "data\some_export.xlsx"
+    run(sys.argv[1] if len(sys.argv) > 1 else None)
