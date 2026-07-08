@@ -7,3 +7,21 @@
 2026-07-07 11:31:15,272  INFO     ====================================================
 2026-07-07 11:31:15,273  INFO     Project TRACE - Watcher live. Monitoring '01_Inbound' (Ctrl+C to stop)
 2026-07-07 11:31:15,274  INFO     ====================================================
+2026-07-07 12:21:49,339  INFO     ====================================================
+2026-07-07 12:21:49,340  INFO     Project TRACE - Watcher live. Monitoring '01_Inbound' (Ctrl+C to stop)
+2026-07-07 12:21:49,341  INFO     ====================================================
+2026-07-07 12:25:42,317  INFO     ====================================================
+2026-07-07 12:25:42,317  INFO     Project TRACE - Watcher live. Monitoring '01_Inbound' (Ctrl+C to stop)
+2026-07-07 12:25:42,318  INFO     ====================================================
+2026-07-07 12:41:14,120  INFO     ====================================================
+2026-07-07 12:41:14,120  INFO     Project TRACE - Watcher live. Monitoring '01_Inbound' (Ctrl+C to stop)
+2026-07-07 12:41:14,120  INFO     ====================================================
+2026-07-07 12:41:14,127  INFO     Crash recovery: reset 1 stalled file(s) to RETRY.
+2026-07-07 12:41:14,129  INFO     Startup scan: 2 file(s) already in '01_Inbound'.
+2026-07-07 12:41:14,130  INFO     Detected: M00471_validated - Copy.pdf
+2026-07-07 12:41:14,698  INFO     SHA-256: a24bb85be6...d7549f5df6
+2026-07-07 12:41:14,704  INFO     Duplicate of a file already 'PENDING'; routing to duplicate queue.
+2026-07-07 12:41:14,713  INFO     Detected: M00471_validated.pdf
+2026-07-07 12:41:15,244  INFO     SHA-256: a24bb85be6...d7549f5df6
+2026-07-07 12:41:15,245  INFO     Duplicate of a file already 'PENDING'; routing to duplicate queue.
+2026-07-07 12:41:31,145  INFO     Stopping watcher...
